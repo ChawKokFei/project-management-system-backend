@@ -13,7 +13,7 @@ public interface EmployeeService {
 
     void deleteById(Long id);
 
-    void deleteALlById(List<Long> ids);
+    void deleteAllById(List<Long> ids);
 
     EmployeeResponse update(Long id, EmployeeRequest employeeRequest);
 }

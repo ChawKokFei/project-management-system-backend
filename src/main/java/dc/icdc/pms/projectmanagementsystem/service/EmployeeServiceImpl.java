@@ -49,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteALlById(List<Long> ids) {
+    public void deleteAllById(List<Long> ids) {
         employeeRepository.deleteAllById(ids);
     }
 }
