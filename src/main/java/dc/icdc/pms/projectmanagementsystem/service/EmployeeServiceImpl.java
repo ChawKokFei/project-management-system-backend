@@ -8,17 +8,14 @@ import dc.icdc.pms.projectmanagementsystem.response.EmployeeResponse;
 import jakarta.validation.executable.ValidateOnExecution;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
-    }
-
-    @Override
-    public Iterable<Employee> findAll() {
-        return employeeRepository.findAll();
     }
 
     @Override
@@ -30,8 +27,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        employeeRepository.deleteById(id);
+    public Iterable<Employee> findAll() {
+        return employeeRepository.findAll();
     }
 
     @Override
@@ -44,5 +41,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeeRequest.getDob());
         Employee result = employeeRepository.save(employee);
         return EmployeeConverter.toResponse(result);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteALlById(List<Long> ids) {
+        employeeRepository.deleteAllById(ids);
     }
 }
