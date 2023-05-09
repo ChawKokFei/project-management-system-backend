@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @Log4j2
@@ -31,17 +32,31 @@ public class EmployeeController {
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getEmployeeById(@PathVariable Long id) {
+        Optional<Employee> employee = employeeService.findById(id);
+        try {
+            Employee result = employee.get();
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            log.info(e);
+            return new ResponseEntity<>("Employee not found.", HttpStatus.NOT_FOUND);
+        }
+
+    }
+
     @GetMapping
     public ResponseEntity<Iterable<Employee>> getAllEmployees() {
         return new ResponseEntity<>(employeeService.findAll(), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponse> updateEmployeeById(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest) {
+    public ResponseEntity<Iterable<Employee>> updateEmployeeById(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest) {
         log.info(employeeRequest);
         log.info(id);
         EmployeeResponse newEmployee = employeeService.update(id, employeeRequest);
-        return new ResponseEntity<>(newEmployee, HttpStatus.OK);
+        Iterable<Employee> employees = employeeService.findAll();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

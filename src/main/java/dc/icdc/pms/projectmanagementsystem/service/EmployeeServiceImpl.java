@@ -9,6 +9,7 @@ import jakarta.validation.executable.ValidateOnExecution;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -24,6 +25,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee result = employeeRepository.save(employee);
         return EmployeeConverter.toResponse(result);
+    }
+
+    @Override
+    public Optional<Employee> findById(Long id) {
+        return employeeRepository.findById(id);
     }
 
     @Override

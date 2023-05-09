@@ -5,6 +5,7 @@ import dc.icdc.pms.projectmanagementsystem.request.EmployeeRequest;
 import dc.icdc.pms.projectmanagementsystem.response.EmployeeResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeService {
     Iterable<Employee> findAll();
@@ -16,4 +17,6 @@ public interface EmployeeService {
     void deleteAllById(List<Long> ids);
 
     EmployeeResponse update(Long id, EmployeeRequest employeeRequest);
+
+    Optional<Employee> findById(Long id);
 }
