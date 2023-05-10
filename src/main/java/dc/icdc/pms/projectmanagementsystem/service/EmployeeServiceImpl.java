@@ -1,11 +1,9 @@
 package dc.icdc.pms.projectmanagementsystem.service;
 
-import dc.icdc.pms.projectmanagementsystem.converter.EmployeeConverter;
+import dc.icdc.pms.projectmanagementsystem.dto.EmployeeDto;
 import dc.icdc.pms.projectmanagementsystem.entity.Employee;
+import dc.icdc.pms.projectmanagementsystem.mapper.AutoEmployeeMapper;
 import dc.icdc.pms.projectmanagementsystem.repository.EmployeeRepository;
-import dc.icdc.pms.projectmanagementsystem.request.EmployeeRequest;
-import dc.icdc.pms.projectmanagementsystem.response.EmployeeResponse;
-import jakarta.validation.executable.ValidateOnExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,54 +12,63 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final AutoEmployeeMapper employeeMapper = AutoEmployeeMapper.MAPPER;
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
     @Override
-    public EmployeeResponse save(EmployeeRequest employeeRequest) {
-        Employee employee = EmployeeConverter.toEntity(employeeRequest);
+    public EmployeeDto save(EmployeeDto employeeRequest) {
+        Employee employee = employeeMapper.mapToEmployee(employeeRequest);
 
-        Employee result = employeeRepository.save(employee);
-        return EmployeeConverter.toResponse(result);
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return employeeMapper.mapToEmployeeDto(savedEmployee);
     }
 
     @Override
-    public Optional<Employee> findById(Long id) {
-        return employeeRepository.findById(id);
+    public List<EmployeeDto> findAll() {
+        List<Employee> employees = employeeRepository.findAll();
+
+        return employees
+                .stream()
+                .map(employeeMapper::mapToEmployeeDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Page<Employee> findAll(Pageable pageable) {
-        Pageable sortedById = PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-//                Sort.by(Sort.Order.asc("id")));
-                Sort.by("id").ascending());
-        return employeeRepository.findAll(pageable);
+    public EmployeeDto findById(Long id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+
+        return employee.map(employeeMapper::mapToEmployeeDto).orElse(null);
     }
 
     @Override
-    public Iterable<Employee> findAll() {
-        return employeeRepository.findAll();
+    public EmployeeDto update(Long id, EmployeeDto employeeRequest) {
+        employeeRequest.setId(id);
+
+        Employee employee = employeeMapper.mapToEmployee(employeeRequest);
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return employeeMapper.mapToEmployeeDto(savedEmployee);
     }
 
-    @Override
-    public EmployeeResponse update(Long id, EmployeeRequest employeeRequest) {
-        Employee employee = new Employee(
-                id,
-                employeeRequest.getFirstName(),
-                employeeRequest.getLastName(),
-                employeeRequest.getEmployeeNo(),
-                employeeRequest.getDob());
-        Employee result = employeeRepository.save(employee);
-        return EmployeeConverter.toResponse(result);
-    }
+    //    @Override
+//    public Page<Employee> findAll(Pageable pageable) {
+//        Pageable sortedById = PageRequest.of(
+//                pageable.getPageNumber(),
+//                pageable.getPageSize(),
+////                Sort.by(Sort.Order.asc("id")));
+//                Sort.by("id").ascending());
+//        return employeeRepository.findAll(pageable);
+//    }
 
     @Override
     public void deleteById(Long id) {

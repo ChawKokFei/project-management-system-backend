@@ -1,8 +1,7 @@
 package dc.icdc.pms.projectmanagementsystem.controller;
 
+import dc.icdc.pms.projectmanagementsystem.dto.EmployeeDto;
 import dc.icdc.pms.projectmanagementsystem.entity.Employee;
-import dc.icdc.pms.projectmanagementsystem.request.EmployeeRequest;
-import dc.icdc.pms.projectmanagementsystem.response.EmployeeResponse;
 import dc.icdc.pms.projectmanagementsystem.service.EmployeeService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -28,61 +27,61 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Iterable<Employee>> saveEmployee(@RequestBody EmployeeRequest employeeRequest) {
-        log.info(employeeRequest);
-        employeeService.save(employeeRequest);
-        Iterable<Employee> employees = employeeService.findAll();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody EmployeeDto employeeRequest) {
+        EmployeeDto employee = employeeService.save(employeeRequest);
+
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        Optional<Employee> employee = employeeService.findById(id);
-        try {
-            Employee result = employee.get();
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (Exception e) {
-            log.info(e);
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
+        EmployeeDto employee = employeeService.findById(id);
+
+        if (employee != null) {
+            return new ResponseEntity<>(employee, HttpStatus.OK);
         }
 
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<Employee>> getEmployeesByPage(@PageableDefault(size = 5) Pageable page) {
-        try {
-            return new ResponseEntity<>(employeeService.findAll(page), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @GetMapping
+//    public ResponseEntity<Page<Employee>> getEmployeesByPage(@PageableDefault(size = 5) Pageable page) {
+//        try {
+//            return new ResponseEntity<>(employeeService.findAll(page), HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @GetMapping("/all")
-    public ResponseEntity<Iterable<Employee>> getAllEmployees() {
-        return new ResponseEntity<>(employeeService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
+        List<EmployeeDto> employees = employeeService.findAll();
+
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Iterable<Employee>> updateEmployeeById(@PathVariable Long id, @RequestBody EmployeeRequest employeeRequest) {
-        log.info(employeeRequest);
-        log.info(id);
-        EmployeeResponse newEmployee = employeeService.update(id, employeeRequest);
-        Iterable<Employee> employees = employeeService.findAll();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    public ResponseEntity<EmployeeDto> updateEmployeeById(@PathVariable Long id, @RequestBody EmployeeDto employeeRequest) {
+        EmployeeDto employee = employeeService.update(id, employeeRequest);
+
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Iterable<Employee>> deleteEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteEmployeeById(@PathVariable Long id) {
         employeeService.deleteById(id);
-        Iterable<Employee> employees = employeeService.findAll();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+
+        return new ResponseEntity<>("Deleted ".concat(id.toString()), HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<Iterable<Employee>> deleteEmployeeByIds(@RequestBody Map<String, Object> idsMap) {
-        List<Long> ids = (List<Long>) idsMap.get("ids");
-        employeeService.deleteAllById(ids);
-        Iterable<Employee> employees = employeeService.findAll();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    public ResponseEntity<String> deleteEmployeeByIds(@RequestParam Optional<List<Long>> ids) {
+        if (ids.isPresent()) {
+            employeeService.deleteAllById(ids.get());
+            return new ResponseEntity<>("Deleted ".concat(ids.get().toString()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Please provide at least 1 id", HttpStatus.NO_CONTENT);
+        }
+
     }
 }

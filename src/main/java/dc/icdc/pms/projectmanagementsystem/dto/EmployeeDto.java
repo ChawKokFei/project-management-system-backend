@@ -1,16 +1,15 @@
-package dc.icdc.pms.projectmanagementsystem.response;
+package dc.icdc.pms.projectmanagementsystem.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeResponse {
+public class EmployeeDto {
     private Long id;
     private String firstName;
     private String lastName;
