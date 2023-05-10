@@ -6,6 +6,10 @@ import dc.icdc.pms.projectmanagementsystem.repository.EmployeeRepository;
 import dc.icdc.pms.projectmanagementsystem.request.EmployeeRequest;
 import dc.icdc.pms.projectmanagementsystem.response.EmployeeResponse;
 import jakarta.validation.executable.ValidateOnExecution;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +34,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Optional<Employee> findById(Long id) {
         return employeeRepository.findById(id);
+    }
+
+    @Override
+    public Page<Employee> findAll(Pageable pageable) {
+        Pageable sortedById = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+//                Sort.by(Sort.Order.asc("id")));
+                Sort.by("id").ascending());
+        return employeeRepository.findAll(pageable);
     }
 
     @Override
