@@ -1,5 +1,6 @@
 package dc.icdc.pms.projectmanagementsystem.dto;
 
+import dc.icdc.pms.projectmanagementsystem.entity.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

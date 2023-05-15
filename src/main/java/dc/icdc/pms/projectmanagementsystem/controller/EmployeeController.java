@@ -44,14 +44,14 @@ public class EmployeeController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Page<Employee>> getEmployeesByPage(@PageableDefault(size = 5) Pageable page) {
-//        try {
-//            return new ResponseEntity<>(employeeService.findAll(page), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @GetMapping
+    public ResponseEntity<Page<EmployeeDto>> getEmployeesByPage(@PageableDefault(size = 5) Pageable page) {
+        try {
+            return new ResponseEntity<>(employeeService.findAll(page), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/all")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
@@ -78,6 +78,7 @@ public class EmployeeController {
     public ResponseEntity<String> deleteEmployeeByIds(@RequestParam Optional<List<Long>> ids) {
         if (ids.isPresent()) {
             employeeService.deleteAllById(ids.get());
+
             return new ResponseEntity<>("Deleted ".concat(ids.get().toString()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Please provide at least 1 id", HttpStatus.NO_CONTENT);

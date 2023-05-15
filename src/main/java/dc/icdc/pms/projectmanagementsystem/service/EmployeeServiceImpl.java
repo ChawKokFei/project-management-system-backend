@@ -36,10 +36,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDto> findAll() {
         List<Employee> employees = employeeRepository.findAll();
 
-        return employees
-                .stream()
-                .map(employeeMapper::mapToEmployeeDto)
-                .collect(Collectors.toList());
+//        return employees
+//                .stream()
+//                .map(employeeMapper::mapToEmployeeDto)
+//                .collect(Collectors.toList());
+
+        // Added collection mapping method for Employee to EmployeeDto
+        return employeeMapper.mapToEmployeesDto(employees);
+    }
+
+    @Override
+    public Page<EmployeeDto> findAll(Pageable pageable) {
+        Pageable sortedById = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+//                Sort.by(Sort.Order.asc("id")));
+                Sort.by("id").ascending());
+        return employeeRepository.findAll(pageable).map(employeeMapper::mapToEmployeeDto);
     }
 
     @Override
@@ -59,16 +72,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeMapper.mapToEmployeeDto(savedEmployee);
     }
-
-    //    @Override
-//    public Page<Employee> findAll(Pageable pageable) {
-//        Pageable sortedById = PageRequest.of(
-//                pageable.getPageNumber(),
-//                pageable.getPageSize(),
-////                Sort.by(Sort.Order.asc("id")));
-//                Sort.by("id").ascending());
-//        return employeeRepository.findAll(pageable);
-//    }
 
     @Override
     public void deleteById(Long id) {
