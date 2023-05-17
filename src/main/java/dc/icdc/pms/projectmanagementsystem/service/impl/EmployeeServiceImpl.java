@@ -74,10 +74,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto update(EmployeeDto employeeRequest) {
-        Employee employee = employeeRepository.findById(employeeRequest.getId())
+        employeeRepository.findById(employeeRequest.getId())
                         .orElseThrow(
                                 getResourceNotFoundExceptionSupplier(employeeRequest.getId())
                         );
+
+        Employee employee = employeeMapper.mapToEmployee(employeeRequest);
 
         Employee savedEmployee = employeeRepository.save(employee);
 
