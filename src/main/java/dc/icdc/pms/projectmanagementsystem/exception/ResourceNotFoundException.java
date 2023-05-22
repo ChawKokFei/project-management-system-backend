@@ -10,7 +10,7 @@ public class ResourceNotFoundException extends RuntimeException {
                                      String fieldName,
                                      Long fieldValue) {
         // Custom exception message
-        super(String.format("%s is not found with %s: '%s",
+        super(String.format("%s is not found with %s: '%s'",
                 resourceName,
                 fieldName,
                 fieldValue));

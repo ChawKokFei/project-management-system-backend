@@ -27,7 +27,7 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDto> saveEmployee(@Valid @RequestBody EmployeeDto employeeRequest) {
         EmployeeDto employee = employeeService.save(employeeRequest);
 
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+        return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
